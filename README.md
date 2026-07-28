@@ -88,13 +88,13 @@ MySQL
 
 1. Clone the repository
 ```bash
-   git clone https://github.com/<your-username>/enterprise-asset-management-system.git
+   git clone https://github.com/darshan1924/enterprise-asset-management-system.git
    cd enterprise-asset-management-system
 ```
 
 2. Create the database
 ```sql
-   CREATE DATABASE eams;
+   CREATE DATABASE enterprise_asset_management;
 ```
 
 3. Configure your local database credentials in `src/main/resources/application-dev.yml`
