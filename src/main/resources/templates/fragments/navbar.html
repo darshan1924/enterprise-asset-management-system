@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav class="eams-navbar" th:fragment="navbar">
+
+    <button class="eams-icon-btn d-lg-none" type="button" id="eamsSidebarToggle" aria-label="Toggle navigation">
+        <i class="bi bi-list" style="font-size: 20px;"></i>
+    </button>
+
+    <div class="eams-search d-none d-md-flex align-items-center">
+        <span class="eams-brand-title" style="font-weight: 600; font-size: 1.1rem; color: var(--text-primary); letter-spacing: -0.01em;">
+            Enterprise Asset Management System
+        </span>
+    </div>
+
+    <div class="eams-navbar-actions">
+
+        <div class="dropdown">
+            <button class="eams-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                <i class="bi bi-bell"></i>
+                <span class="eams-dot"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end eams-dropdown" style="min-width: 300px;">
+                <li class="px-3 py-2" style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em;">Notifications</li>
+                <li><hr class="dropdown-divider" style="border-color: var(--border-subtle);"></li>
+                <li><a class="dropdown-item eams-dropdown-item" href="#">
+                    <i class="bi bi-tools" style="color: var(--accent-warning);"></i>
+                    3 assets have maintenance due this week
+                </a></li>
+                <li><a class="dropdown-item eams-dropdown-item" href="#">
+                    <i class="bi bi-shield-exclamation" style="color: var(--accent-danger);"></i>
+                    2 warranties expiring in 15 days
+                </a></li>
+                <li><a class="dropdown-item eams-dropdown-item" href="#">
+                    <i class="bi bi-arrow-return-left" style="color: var(--accent-info);"></i>
+                    1 asset return is overdue
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <div class="eams-user" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="eams-avatar" th:text="${#authentication.name.substring(0, T(java.lang.Math).min(2, #authentication.name.length())).toUpperCase()}">AD</div>
+                    <div class="d-none d-md-block">
+                        <div class="eams-user-name" th:text="${#authentication.name}">Admin User</div>
+                        <div class="eams-user-role"
+                             th:text="${#authorization.expression('hasRole(''ADMIN'')')} ? 'System Administrator' :
+                                       (${#authorization.expression('hasRole(''ASSET_MANAGER'')')} ? 'Asset Manager' : 'Employee')">
+                            Role
+                        </div>
+                    </div>
+                <i class="bi bi-chevron-down" style="font-size: 11px; color: var(--text-muted);"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end eams-dropdown">
+                <li><a class="dropdown-item eams-dropdown-item" th:href="@{/profile/change-password}"><i class="bi bi-key"></i> Change Password</a></li>
+                <li><a class="dropdown-item eams-dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                <li><hr class="dropdown-divider" style="border-color: var(--border-subtle);"></li>
+                <li>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="dropdown-item eams-dropdown-item border-0 bg-transparent w-100 text-start" style="color: var(--accent-danger);">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(${isEdit} ? 'Edit Employee' : 'New Employee', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${isEdit} ? 'Edit Employee' : 'New Employee'">New Employee</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Employees can be assigned company assets</p>
+            </div>
+            <a th:href="@{/employees}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 720px;">
+            <form th:action="${isEdit} ? @{/employees/{id}(id=${employeeId})} : @{/employees}"
+                  th:object="${employeeRequestDto}" method="post">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Employee Code</label>
+                        <input type="text" class="form-control eams-input eams-mono" th:field="*{employeeCode}" placeholder="e.g. EMP-0042">
+                        <div class="eams-error" th:if="${#fields.hasErrors('employeeCode')}" th:errors="*{employeeCode}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Department</label>
+                        <select class="form-select eams-input" th:field="*{departmentId}">
+                            <option value="">Select department…</option>
+                            <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.departmentName}">Department</option>
+                        </select>
+                        <div class="eams-error" th:if="${#fields.hasErrors('departmentId')}" th:errors="*{departmentId}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">First Name</label>
+                        <input type="text" class="form-control eams-input" th:field="*{firstName}" placeholder="e.g. Priya">
+                        <div class="eams-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Last Name</label>
+                        <input type="text" class="form-control eams-input" th:field="*{lastName}" placeholder="e.g. Sharma">
+                        <div class="eams-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Email</label>
+                        <input type="email" class="form-control eams-input" th:field="*{email}" placeholder="e.g. priya.sharma@company.com">
+                        <div class="eams-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Phone Number</label>
+                        <input type="text" class="form-control eams-input" th:field="*{phoneNumber}" placeholder="e.g. +91 98765 43210">
+                        <div class="eams-error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="eams-label">Designation</label>
+                    <input type="text" class="form-control eams-input" th:field="*{designation}" placeholder="e.g. Software Engineer">
+                    <div class="eams-error" th:if="${#fields.hasErrors('designation')}" th:errors="*{designation}"></div>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary">
+                    <i class="bi bi-check-lg"></i> <span th:text="${isEdit} ? 'Save Changes' : 'Create Employee'">Save</span>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

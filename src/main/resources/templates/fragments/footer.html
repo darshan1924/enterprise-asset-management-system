@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer class="eams-footer" th:fragment="footer">
+    <span>&copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> Enterprise Asset Management System</span>
+    <span class="eams-mono">v1.0.0</span>
+</footer>
+</body>
+</html>

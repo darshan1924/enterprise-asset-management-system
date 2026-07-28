@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:replace="~{layout/base :: layout('Categories', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Asset Categories</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Classifications used to group assets</p>
+            </div>
+            <a th:href="@{/categories/new}" class="btn eams-btn eams-btn--primary" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')"><i class="bi bi-plus-lg"></i> New Category</a>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Assets</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cat : ${categories.content}">
+                        <td th:text="${cat.categoryName}">Category</td>
+                        <td th:text="${cat.description} ?: '—'">Description</td>
+                        <td><span class="eams-badge eams-badge--info" th:text="${cat.assetCount}">0</span></td>
+                        <td class="text-end" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                            <a th:href="@{/categories/{id}/edit(id=${cat.id})}" class="eams-icon-btn"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/categories/{id}/delete(id=${cat.id})}" method="post" class="d-inline"
+                                  data-confirm="Delete this category? This cannot be undone.">
+                                <button type="submit" class="eams-icon-btn eams-icon-btn--danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${categories.content.isEmpty()}">
+                        <td colspan="4" class="text-center py-4" style="color: var(--text-muted);">No categories found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${categories}, '/categories')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

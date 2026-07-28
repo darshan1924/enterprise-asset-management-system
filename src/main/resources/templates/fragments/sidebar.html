@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<aside class="eams-sidebar" th:fragment="sidebar" id="eamsSidebar">
+
+    <div class="eams-brand">
+        <div class="eams-brand-mark"><i class="bi bi-bounding-box-circles"></i></div>
+        <div class="eams-brand-text">
+            EAMS
+            <small>Asset Management</small>
+        </div>
+    </div>
+
+    <!-- Define uri variable safely from Spring Request Context -->
+    <nav class="eams-nav" th:with="uri=${#httpServletRequest != null ? #httpServletRequest.requestURI : (currentUri != null ? currentUri : '')}">
+
+        <!-- Dashboard -->
+        <div class="eams-nav-group">
+            <a class="eams-nav-link"
+               th:href="@{/dashboard}"
+               th:classappend="${#strings.startsWith(uri, '/dashboard') ? 'active' : ''}">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </div>
+
+        <!-- Organization -->
+        <div class="eams-nav-group" sec:authorize="hasRole('ADMIN')">
+            <div class="eams-nav-group-label">Organization</div>
+            <a th:href="@{/departments}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/departments') ? 'active' : ''}">
+                <i class="bi bi-diagram-3"></i> Departments
+            </a>
+            <a th:href="@{/employees}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/employees') ? 'active' : ''}">
+                <i class="bi bi-people"></i> Employees
+            </a>
+        </div>
+
+        <!-- Procurement -->
+        <div class="eams-nav-group">
+            <div class="eams-nav-group-label">Procurement</div>
+            <a th:href="@{/vendors}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/vendors') ? 'active' : ''}">
+                <i class="bi bi-truck"></i> Vendors
+            </a>
+            <a th:href="@{/categories}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/categories') ? 'active' : ''}">
+                <i class="bi bi-tags"></i> Categories
+            </a>
+        </div>
+
+        <!-- Assets -->
+        <div class="eams-nav-group">
+            <div class="eams-nav-group-label">Assets</div>
+            <a th:href="@{/assets}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/assets') ? 'active' : ''}">
+                <i class="bi bi-laptop"></i> Asset Inventory
+            </a>
+            <a th:href="@{/allocations}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/allocations') ? 'active' : ''}">
+                <i class="bi bi-person-check"></i> Allocations
+            </a>
+            <a th:href="@{/maintenance}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/maintenance') ? 'active' : ''}">
+                <i class="bi bi-tools"></i> Maintenance
+            </a>
+            <a th:href="@{/transfers}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/transfers') ? 'active' : ''}">
+                <i class="bi bi-arrow-left-right"></i> Transfers
+            </a>
+        </div>
+
+        <!-- Insights -->
+        <div class="eams-nav-group">
+            <div class="eams-nav-group-label">Insights</div>
+            <a th:href="@{/reports}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/reports') ? 'active' : ''}">
+                <i class="bi bi-bar-chart"></i> Reports
+            </a>
+            <a th:href="@{/audit}" class="eams-nav-link" sec:authorize="hasRole('ADMIN')"
+               th:classappend="${#strings.startsWith(uri, '/audit') ? 'active' : ''}">
+                <i class="bi bi-journal-text"></i> Audit Log
+            </a>
+        </div>
+
+        <!-- Administration (only for ADMIN) -->
+        <div class="eams-nav-group" sec:authorize="hasRole('ADMIN')">
+            <div class="eams-nav-group-label">Administration</div>
+            <a th:href="@{/users}" class="eams-nav-link"
+               th:classappend="${#strings.startsWith(uri, '/users') ? 'active' : ''}">
+                <i class="bi bi-person-gear"></i> Users
+            </a>
+        </div>
+
+    </nav>
+</aside>
+</body>
+</html>

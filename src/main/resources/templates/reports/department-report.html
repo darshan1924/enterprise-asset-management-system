@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Department Report', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Assets by Department</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Headcount and allocated asset value per department</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/reports/departments/export}" class="btn eams-btn eams-btn--primary"><i class="bi bi-download"></i> Export CSV</a>
+                <a th:href="@{/reports}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to Reports</a>
+            </div>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Code</th>
+                        <th>Employees</th>
+                        <th>Allocated Assets</th>
+                        <th>Allocated Asset Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${report}">
+                        <td th:text="${row.departmentName}">Department</td>
+                        <td class="eams-mono" th:text="${row.departmentCode}">CODE</td>
+                        <td><span class="eams-badge eams-badge--info" th:text="${row.employeeCount}">0</span></td>
+                        <td><span class="eams-badge eams-badge--success" th:text="${row.allocatedAssetsCount}">0</span></td>
+                        <td class="eams-mono" th:text="${'₹' + row.allocatedAssetsValue}">₹0</td>
+                    </tr>
+                    <tr th:if="${report.isEmpty()}">
+                        <td colspan="5" class="text-center py-4" style="color: var(--text-muted);">No departments found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

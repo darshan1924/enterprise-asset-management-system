@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:replace="~{layout/base :: layout('Vendors', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Vendors</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Suppliers and maintenance service providers</p>
+            </div>
+            <a th:href="@{/vendors/new}" class="btn eams-btn eams-btn--primary" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                <i class="bi bi-plus-lg"></i> New Vendor
+            </a>
+        </div>
+
+        <div class="eams-card">
+            <form th:action="@{/vendors}" method="get" class="eams-search mb-3" style="width: 340px;">
+                <i class="bi bi-search"></i>
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by name, contact, email…">
+            </form>
+
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th data-sort-field="vendorName">Vendor</th>
+                        <th>Contact Person</th>
+                        <th>Email</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Assets / Jobs</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="vendor : ${vendors.content}">
+                        <td th:text="${vendor.vendorName}">Vendor</td>
+                        <td th:text="${vendor.contactPerson}">Contact</td>
+                        <td th:text="${vendor.email}">Email</td>
+                        <td>
+                        <span th:if="${vendor.rating != null}" class="eams-mono">
+                            <i class="bi bi-star-fill" style="color: var(--accent-warning); font-size: 11px;"></i>
+                            <span th:text="${vendor.rating}">4.5</span>
+                        </span>
+                            <span th:if="${vendor.rating == null}" style="color: var(--text-muted);">—</span>
+                        </td>
+                        <td>
+                        <span th:switch="${vendor.status}">
+                            <span th:case="'ACTIVE'" class="eams-badge eams-badge--success">ACTIVE</span>
+                            <span th:case="'INACTIVE'" class="eams-badge eams-badge--warning">INACTIVE</span>
+                            <span th:case="*" class="eams-badge eams-badge--danger" th:text="${vendor.status}">BLACKLISTED</span>
+                        </span>
+                        </td>
+                        <td class="eams-mono" style="font-size: 12px; color: var(--text-secondary);">
+                            <span th:text="${vendor.suppliedAssetsCount}">0</span> / <span th:text="${vendor.maintenanceJobsCount}">0</span>
+                        </td>
+                        <td class="text-end" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                            <a th:href="@{/vendors/{id}/edit(id=${vendor.id})}" class="eams-icon-btn"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/vendors/{id}/delete(id=${vendor.id})}" method="post" class="d-inline"
+                                  data-confirm="Delete this vendor? This cannot be undone.">
+                                <button type="submit" class="eams-icon-btn eams-icon-btn--danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${vendors.content.isEmpty()}">
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-muted);">No vendors found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${vendors}, '/vendors')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

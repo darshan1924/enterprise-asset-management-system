@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(${isEdit} ? 'Edit Asset' : 'New Asset', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${isEdit} ? 'Edit Asset' : 'New Asset'">New Asset</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Register a physical asset into inventory</p>
+            </div>
+            <a th:href="@{/assets}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 780px;">
+            <form th:action="${isEdit} ? @{/assets/{id}(id=${assetId})} : @{/assets}"
+                  th:object="${assetRequestDto}" method="post">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Asset Code</label>
+                        <input type="text" class="form-control eams-input eams-mono" th:field="*{assetCode}" placeholder="e.g. AST-00123">
+                        <div class="eams-error" th:if="${#fields.hasErrors('assetCode')}" th:errors="*{assetCode}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Asset Name</label>
+                        <input type="text" class="form-control eams-input" th:field="*{assetName}" placeholder="e.g. Dell Latitude 5440">
+                        <div class="eams-error" th:if="${#fields.hasErrors('assetName')}" th:errors="*{assetName}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Category</label>
+                        <select class="form-select eams-input" th:field="*{categoryId}">
+                            <option value="">Select category…</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.categoryName}">Category</option>
+                        </select>
+                        <div class="eams-error" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Vendor (optional)</label>
+                        <select class="form-select eams-input" th:field="*{vendorId}">
+                            <option value="">Select vendor…</option>
+                            <option th:each="v : ${vendors}" th:value="${v.id}" th:text="${v.vendorName}">Vendor</option>
+                        </select>
+                        <div class="eams-error" th:if="${#fields.hasErrors('vendorId')}" th:errors="*{vendorId}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="eams-label">Purchase Date</label>
+                        <input type="date" class="form-control eams-input" th:field="*{purchaseDate}">
+                        <div class="eams-error" th:if="${#fields.hasErrors('purchaseDate')}" th:errors="*{purchaseDate}"></div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="eams-label">Purchase Cost (₹)</label>
+                        <input type="number" step="0.01" class="form-control eams-input eams-mono" th:field="*{purchaseCost}" placeholder="e.g. 75000">
+                        <div class="eams-error" th:if="${#fields.hasErrors('purchaseCost')}" th:errors="*{purchaseCost}"></div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="eams-label">Warranty Expiry (optional)</label>
+                        <input type="date" class="form-control eams-input" th:field="*{warrantyExpiryDate}">
+                        <div class="eams-error" th:if="${#fields.hasErrors('warrantyExpiryDate')}" th:errors="*{warrantyExpiryDate}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label">Location</label>
+                    <input type="text" class="form-control eams-input" th:field="*{location}" placeholder="e.g. Building A, Floor 2, Rack 5">
+                    <div class="eams-error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="eams-label">Description (optional)</label>
+                    <textarea class="form-control eams-input" rows="3" th:field="*{description}" placeholder="Specs, serial number, extra notes…"></textarea>
+                    <div class="eams-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary">
+                    <i class="bi bi-check-lg"></i> <span th:text="${isEdit} ? 'Save Changes' : 'Register Asset'">Save</span>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

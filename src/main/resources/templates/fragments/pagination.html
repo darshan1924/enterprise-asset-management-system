@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="pagination(page, baseUrl)"
+     class="eams-pagination-bar"
+     th:if="${page.totalPages > 0}"
+     th:attr="data-total-pages=${page.totalPages}, data-current-page=${page.number}">
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="eams-pagination-info">
+            Page <span th:text="${page.number + 1}">1</span> of <span th:text="${page.totalPages}">1</span>
+            &middot; <span th:text="${page.totalElements}">0</span> total records
+        </div>
+
+        <div class="eams-page-size-select">
+            <label for="eamsPageSize" style="font-size: 12px; color: var(--text-muted);">Rows:</label>
+            <select id="eamsPageSize" class="eams-input eams-page-size-dropdown"
+                    th:attr="data-base-url=${baseUrl}">
+                <option value="10" th:selected="${page.size == 10}">10</option>
+                <option value="25" th:selected="${page.size == 25}">25</option>
+                <option value="50" th:selected="${page.size == 50}">50</option>
+                <option value="100" th:selected="${page.size == 100}">100</option>
+            </select>
+        </div>
+    </div>
+
+    <nav aria-label="Pagination">
+        <ul class="pagination eams-pagination mb-0"
+            th:with="windowStart=${T(java.lang.Math).max(0, T(java.lang.Math).min(page.number - 2, page.totalPages - 5))},
+                     windowEnd=${T(java.lang.Math).min(page.totalPages - 1, T(java.lang.Math).max(page.number + 2, 4))}">
+
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{${baseUrl}(page=0)}" aria-label="First page">
+                    <i class="bi bi-chevron-double-left"></i>
+                </a>
+            </li>
+
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link" th:href="@{${baseUrl}(page=${page.number - 1})}" aria-label="Previous page">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${windowStart > 0}"><span class="page-link eams-pagination-ellipsis">…</span></li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(windowStart, windowEnd)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link" th:href="@{${baseUrl}(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:if="${windowEnd < page.totalPages - 1}"><span class="page-link eams-pagination-ellipsis">…</span></li>
+
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{${baseUrl}(page=${page.number + 1})}" aria-label="Next page">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link" th:href="@{${baseUrl}(page=${page.totalPages - 1})}" aria-label="Last page">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

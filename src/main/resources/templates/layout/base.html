@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout (pageTitle, content, pageScripts=~{})"
+      data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EAMS</title>
+
+    <!-- Inline Cartoon Mascot Favicon (fallback/instant preview) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='https://img.magnific.com/free-vector/cute-pen-tablet-cartoon-vector-icon-illustration-people-technology-icon-isolated-flat-vector_138676-15335.jpg?semt=ais_hybrid&w=740&q=80' viewBox='0 0 100 100'><circle cx='50' cy='55' r='35' fill='%2300b4d8'/><rect x='25' y='40' width='50' height='35' rx='10' fill='%23e0f7fa'/><circle cx='40' cy='52' r='4' fill='%2303045e'/><circle cx='60' cy='52' r='4' fill='%2303045e'/><path d='M 42 62 Q 50 68 58 62' stroke='%2303045e' stroke-width='3' fill='none' stroke-linecap='round'/><path d='M 20 35 C 20 15, 80 15, 80 35 Z' fill='%23ffb703'/><rect x='15' y='33' width='70' height='6' rx='3' fill='%23fb8500'/></svg>">
+
+    <!-- Project Static Favicon Files -->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/images/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon-16x16.png}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/images/apple-touch-icon.png}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- EAMS theme -->
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="eams-main">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="eams-content">
+        <div th:replace="${content}"></div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</div>
+
+<div th:replace="~{fragments/confirm-modal :: confirmModal}"></div>
+<div th:replace="~{fragments/toast :: toastContainer}"></div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/toast.js}"></script>
+<script th:src="@{/js/validation.js}"></script>
+<script th:src="@{/js/search.js}"></script>
+<script th:src="@{/js/pagination.js}"></script>
+<script th:src="@{/js/dynamic-table.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+
+<th:block th:replace="${pageScripts} ?: ~{}"></th:block>
+
+</body>
+</html>

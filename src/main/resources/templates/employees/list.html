@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Employees', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Employees</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Everyone eligible to hold company assets</p>
+            </div>
+            <a th:href="@{/employees/new}" class="btn eams-btn eams-btn--primary"><i class="bi bi-plus-lg"></i> New Employee</a>
+        </div>
+
+        <div class="eams-card">
+            <form th:action="@{/employees}" method="get" class="eams-search mb-3" style="width: 340px;">
+                <i class="bi bi-search"></i>
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by name, code, email…">
+            </form>
+
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th data-sort-field="firstName">Name</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Status</th>
+                        <th>Assets Held</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="emp : ${employees.content}">
+                        <td class="eams-mono" th:text="${emp.employeeCode}">EMP-01</td>
+                        <td th:text="${emp.firstName + ' ' + emp.lastName}">Name</td>
+                        <td th:text="${emp.departmentName}">Department</td>
+                        <td th:text="${emp.designation} ?: '—'">Designation</td>
+                        <td>
+                        <span th:switch="${emp.status}">
+                            <span th:case="'ACTIVE'" class="eams-badge eams-badge--success">ACTIVE</span>
+                            <span th:case="'INACTIVE'" class="eams-badge eams-badge--warning">INACTIVE</span>
+                            <span th:case="*" class="eams-badge eams-badge--danger" th:text="${emp.status}">TERMINATED</span>
+                        </span>
+                        </td>
+                        <td><span class="eams-badge eams-badge--info" th:text="${emp.currentAllocatedAssetsCount}">0</span></td>
+                        <td class="text-end">
+                            <a th:href="@{/employees/{id}/edit(id=${emp.id})}" class="eams-icon-btn"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/employees/{id}/delete(id=${emp.id})}" method="post" class="d-inline"
+                                  data-confirm="Delete this employee? This cannot be undone.">
+                                <button type="submit" class="eams-icon-btn eams-icon-btn--danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${employees.content.isEmpty()}">
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-muted);">No employees found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${employees}, '/employees')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="toastContainer" class="eams-toast-container" aria-live="polite" aria-atomic="true">
+
+    <!-- Hidden data carrier: JS reads this on page load and fires a toast if present. -->
+    <div id="eamsFlashData"
+         th:if="${successMessage != null or errorMessage != null}"
+         th:attr="data-success=${successMessage}, data-error=${errorMessage}"
+         style="display:none;"></div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+        <!-- Toasts are injected here dynamically by toast.js -->
+    </div>
+
+</div>
+</body>
+</html>

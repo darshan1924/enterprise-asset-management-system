@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Maintenance Report', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Maintenance Cost Report</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">
+                    <span th:text="${report.totalTicketCount}">0</span> tickets matching current filters
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/reports/maintenance/export(startDate=${startDate}, endDate=${endDate}, status=${status})}" class="btn eams-btn eams-btn--primary"><i class="bi bi-download"></i> Export CSV</a>
+                <a th:href="@{/reports}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to Reports</a>
+            </div>
+        </div>
+
+        <div class="eams-card mb-3">
+            <form th:action="@{/reports/maintenance}" method="get" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="eams-label">From Date</label>
+                    <input type="date" name="startDate" th:value="${startDate}" class="form-control eams-input">
+                </div>
+                <div class="col-md-3">
+                    <label class="eams-label">To Date</label>
+                    <input type="date" name="endDate" th:value="${endDate}" class="form-control eams-input">
+                </div>
+                <div class="col-md-3">
+                    <label class="eams-label">Status</label>
+                    <select name="status" class="form-select eams-input">
+                        <option value="">All statuses</option>
+                        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"
+                                th:selected="${status != null and status == st}">Status</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn eams-btn eams-btn--primary w-100"><i class="bi bi-funnel"></i> Apply</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Total Tickets</div>
+                    <div class="eams-stat-value" th:text="${report.totalTicketCount}">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Total Cost</div>
+                    <div class="eams-stat-value" style="color: var(--accent-warning); font-size: 20px;" th:text="${'₹' + report.totalCost}">₹0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Average Cost / Ticket</div>
+                    <div class="eams-stat-value" style="font-size: 20px;" th:text="${'₹' + report.averageCost}">₹0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Completed</div>
+                    <div class="eams-stat-value" style="color: var(--accent-primary);" th:text="${report.countByStatus.get('COMPLETED')} ?: 0">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">By Status</h6>
+                    <div th:if="${report.countByStatus.isEmpty()}" class="eams-empty-hint">No tickets found.</div>
+                    <div th:each="entry : ${report.countByStatus}" class="eams-list-row">
+                        <span style="font-size: 13px; color: var(--text-secondary);" th:text="${entry.key}">Status</span>
+                        <span class="eams-badge eams-badge--info" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Cost by Vendor</h6>
+                    <div th:if="${report.costByVendor.isEmpty()}" class="eams-empty-hint">No tickets found.</div>
+                    <div th:each="entry : ${report.costByVendor}" class="eams-list-row">
+                        <span style="font-size: 13px; color: var(--text-secondary);" th:text="${entry.key}">Vendor</span>
+                        <span class="eams-mono" th:text="${'₹' + entry.value}">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Asset</th>
+                        <th>Issue</th>
+                        <th>Vendor</th>
+                        <th>Reported</th>
+                        <th>Completed</th>
+                        <th>Cost</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="m : ${report.records}">
+                        <td class="eams-mono" th:text="${m.assetCode}">AST-001</td>
+                        <td th:text="${m.issueDescription}">Issue</td>
+                        <td th:text="${m.vendorName} ?: '—'">Vendor</td>
+                        <td th:text="${m.reportedDate}">Date</td>
+                        <td th:text="${m.completedDate} ?: '—'">Date</td>
+                        <td class="eams-mono" th:text="${m.maintenanceCost != null ? '₹' + m.maintenanceCost : '—'}">₹0</td>
+                        <td>
+                            <span th:if="${m.status.name() == 'PENDING'}" class="eams-badge eams-badge--warning">PENDING</span>
+                            <span th:if="${m.status.name() == 'IN_PROGRESS'}" class="eams-badge eams-badge--info">IN PROGRESS</span>
+                            <span th:if="${m.status.name() == 'COMPLETED'}" class="eams-badge eams-badge--success">COMPLETED</span>
+                            <span th:if="${m.status.name() == 'CANCELLED'}" class="eams-badge eams-badge--danger">CANCELLED</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${report.records.isEmpty()}">
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-muted);">No maintenance records match the selected filters.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

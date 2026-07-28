@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(${isEdit} ? 'Edit Department' : 'New Department', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${isEdit} ? 'Edit Department' : 'New Department'">New Department</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Departments organize employees and assets</p>
+            </div>
+            <a th:href="@{/departments}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 640px;">
+            <form th:action="${isEdit} ? @{/departments/{id}(id=${departmentId})} : @{/departments}"
+                  th:object="${departmentRequestDto}" method="post" class="eams-validate">
+
+                <div class="mb-3">
+                    <label class="eams-label">Department Name</label>
+                    <input type="text" class="form-control eams-input" th:field="*{departmentName}" placeholder="e.g. Information Technology" required>
+                    <div class="eams-error" th:if="${#fields.hasErrors('departmentName')}" th:errors="*{departmentName}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label">Department Code</label>
+                    <input type="text" class="form-control eams-input eams-mono" th:field="*{departmentCode}" placeholder="e.g. IT">
+                    <div class="eams-error" th:if="${#fields.hasErrors('departmentCode')}" th:errors="*{departmentCode}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label">Location</label>
+                    <input type="text" class="form-control eams-input" th:field="*{location}" placeholder="e.g. Building A, 3rd Floor">
+                    <div class="eams-error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="eams-label">Description</label>
+                    <textarea class="form-control eams-input" rows="3" th:field="*{description}" placeholder="Optional notes about this department"></textarea>
+                    <div class="eams-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary">
+                    <i class="bi bi-check-lg"></i> <span th:text="${isEdit} ? 'Save Changes' : 'Create Department'">Save</span>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

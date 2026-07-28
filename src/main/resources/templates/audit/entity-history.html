@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Entity History', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Audit History</h2>
+                <p class="mb-0 eams-mono" style="color: var(--text-secondary);" th:text="${entityName + ' #' + entityId}">Entity #1</p>
+            </div>
+            <a th:href="@{/audit}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to Full Log</a>
+        </div>
+
+        <div class="eams-card">
+            <div th:if="${logs.content.isEmpty()}" class="eams-empty-hint">No audit records found for this record.</div>
+
+            <div class="eams-timeline" th:unless="${logs.content.isEmpty()}">
+                <div th:each="entry : ${logs.content}" class="eams-timeline-item">
+                    <div class="eams-timeline-dot"></div>
+                    <div class="eams-timeline-content">
+                        <div class="d-flex justify-content-between align-items-start">
+                        <span th:switch="${entry.action}">
+                            <span th:case="'CREATE'" class="eams-badge eams-badge--success">CREATE</span>
+                            <span th:case="'UPDATE'" class="eams-badge eams-badge--info">UPDATE</span>
+                            <span th:case="'DELETE'" class="eams-badge eams-badge--danger">DELETE</span>
+                            <span th:case="*" class="eams-badge eams-badge--info" th:text="${entry.action}">ACTION</span>
+                        </span>
+                            <span class="eams-mono" style="font-size: 11.5px; color: var(--text-muted);"
+                                  th:text="${#temporals.format(entry.createdAt, 'dd MMM yyyy, HH:mm:ss')}">Timestamp</span>
+                        </div>
+                        <p class="mb-1 mt-2" style="font-size: 13.5px;" th:text="${entry.details} ?: '—'">Details</p>
+                        <p class="mb-0" style="font-size: 12px; color: var(--text-muted);">by <span th:text="${entry.performedByUsername}">System</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${logs}, '/audit/entity/' + ${entityName} + '/' + ${entityId})}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

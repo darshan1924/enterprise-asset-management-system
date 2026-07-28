@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(${isEdit} ? 'Edit Vendor' : 'New Vendor', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${isEdit} ? 'Edit Vendor' : 'New Vendor'">New Vendor</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Vendors can supply assets and perform maintenance</p>
+            </div>
+            <a th:href="@{/vendors}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 720px;">
+            <form th:action="${isEdit} ? @{/vendors/{id}(id=${vendorId})} : @{/vendors}"
+                  th:object="${vendorRequestDto}" method="post">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Vendor Name</label>
+                        <input type="text" class="form-control eams-input" th:field="*{vendorName}" placeholder="e.g. Dell Technologies">
+                        <div class="eams-error" th:if="${#fields.hasErrors('vendorName')}" th:errors="*{vendorName}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Contact Person</label>
+                        <input type="text" class="form-control eams-input" th:field="*{contactPerson}" placeholder="e.g. Rahul Mehta">
+                        <div class="eams-error" th:if="${#fields.hasErrors('contactPerson')}" th:errors="*{contactPerson}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Email</label>
+                        <input type="email" class="form-control eams-input" th:field="*{email}" placeholder="e.g. sales@dell.com">
+                        <div class="eams-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">Phone Number</label>
+                        <input type="text" class="form-control eams-input" th:field="*{phoneNumber}" placeholder="e.g. +91 22 4567 8900">
+                        <div class="eams-error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="eams-label">Address</label>
+                        <input type="text" class="form-control eams-input" th:field="*{address}" placeholder="e.g. 4th Floor, Cyber Hub, Gurugram">
+                        <div class="eams-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="eams-label">Rating (0–5)</label>
+                        <input type="number" class="form-control eams-input eams-mono" th:field="*{rating}" step="0.1" min="0" max="5" placeholder="4.5">
+                        <div class="eams-error" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary mt-2">
+                    <i class="bi bi-check-lg"></i> <span th:text="${isEdit} ? 'Save Changes' : 'Create Vendor'">Save</span>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

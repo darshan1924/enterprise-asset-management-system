@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Reports', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Reports</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Analytics and exports across the organization</p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <a th:href="@{/reports/departments}" class="text-decoration-none">
+                    <div class="eams-card eams-report-tile">
+                        <div class="eams-metric-icon mb-3" style="background: var(--accent-primary-dim); color: var(--accent-primary);"><i class="bi bi-diagram-3"></i></div>
+                        <h6 class="mb-1">Assets by Department</h6>
+                        <p class="mb-0" style="font-size: 12.5px; color: var(--text-muted);">Headcount, allocated assets, and value per department</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/reports/assets}" class="text-decoration-none">
+                    <div class="eams-card eams-report-tile">
+                        <div class="eams-metric-icon mb-3" style="background: var(--accent-info-dim); color: var(--accent-info);"><i class="bi bi-laptop"></i></div>
+                        <h6 class="mb-1">Asset Inventory Report</h6>
+                        <p class="mb-0" style="font-size: 12.5px; color: var(--text-muted);">Full asset breakdown by category, status, and vendor</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/reports/maintenance}" class="text-decoration-none">
+                    <div class="eams-card eams-report-tile">
+                        <div class="eams-metric-icon mb-3" style="background: var(--accent-warning-dim); color: var(--accent-warning);"><i class="bi bi-tools"></i></div>
+                        <h6 class="mb-1">Maintenance Cost Report</h6>
+                        <p class="mb-0" style="font-size: 12.5px; color: var(--text-muted);">Ticket costs, status breakdown, and vendor spend</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

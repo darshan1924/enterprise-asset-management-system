@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: eams
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 100
+        one-indexed-parameters: false
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Departments', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Departments</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Organizational structure and headcount</p>
+            </div>
+            <a th:href="@{/departments/new}" class="btn eams-btn eams-btn--primary"><i class="bi bi-plus-lg"></i> New Department</a>
+        </div>
+
+        <div class="eams-card">
+            <form th:action="@{/departments}" method="get" class="eams-search mb-3" style="width: 340px;">
+                <i class="bi bi-search"></i>
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by name, code, location…">
+            </form>
+
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th data-sort-field="departmentName">Name</th>
+                        <th>Code</th>
+                        <th>Location</th>
+                        <th>Employees</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="dept : ${departments.content}">
+                        <td th:text="${dept.departmentName}">Name</td>
+                        <td class="eams-mono" th:text="${dept.departmentCode}">DEP-01</td>
+                        <td th:text="${dept.location} ?: '—'">Location</td>
+                        <td><span class="eams-badge eams-badge--info" th:text="${dept.employeeCount}">0</span></td>
+                        <td class="text-end">
+                            <a th:href="@{/departments/{id}/edit(id=${dept.id})}" class="eams-icon-btn"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/departments/{id}/delete(id=${dept.id})}" method="post" class="d-inline"
+                                  data-confirm="Delete this department? This cannot be undone.">
+                                <button type="submit" class="eams-icon-btn eams-icon-btn--danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${departments.content.isEmpty()}">
+                        <td colspan="5" class="text-center py-4" style="color: var(--text-muted);">No departments found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${departments}, '/departments')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

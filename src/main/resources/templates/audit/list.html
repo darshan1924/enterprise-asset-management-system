@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Audit Log', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Audit Log</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Complete activity trail across the system</p>
+            </div>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Details</th>
+                        <th>Performed By</th>
+                        <th>Timestamp</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${logs.content}">
+                        <td>
+                        <span th:switch="${entry.action}">
+                            <span th:case="'CREATE'" class="eams-badge eams-badge--success">CREATE</span>
+                            <span th:case="'UPDATE'" class="eams-badge eams-badge--info">UPDATE</span>
+                            <span th:case="'DELETE'" class="eams-badge eams-badge--danger">DELETE</span>
+                            <span th:case="'ALLOCATE'" class="eams-badge eams-badge--info">ALLOCATE</span>
+                            <span th:case="'RETURN'" class="eams-badge eams-badge--success">RETURN</span>
+                            <span th:case="'RETIRE'" class="eams-badge eams-badge--warning">RETIRE</span>
+                            <span th:case="'COMPLETE'" class="eams-badge eams-badge--success">COMPLETE</span>
+                            <span th:case="'CANCEL'" class="eams-badge eams-badge--danger">CANCEL</span>
+                            <span th:case="'APPROVE'" class="eams-badge eams-badge--info">APPROVE</span>
+                            <span th:case="'REJECT'" class="eams-badge eams-badge--danger">REJECT</span>
+                            <span th:case="'INITIATE'" class="eams-badge eams-badge--warning">INITIATE</span>
+                            <span th:case="*" class="eams-badge eams-badge--info" th:text="${entry.action}">ACTION</span>
+                        </span>
+                        </td>
+                        <td>
+                            <a th:href="@{/audit/entity/{name}/{id}(name=${entry.entityName}, id=${entry.entityId})}"
+                               class="eams-mono" style="font-size: 12.5px;"
+                               th:text="${entry.entityName + (entry.entityId != null ? ' #' + entry.entityId : '')}">Entity</a>
+                        </td>
+                        <td style="font-size: 13px; color: var(--text-secondary);" th:text="${entry.details} ?: '—'">Details</td>
+                        <td th:text="${entry.performedByUsername}">System</td>
+                        <td class="eams-mono" style="font-size: 12px; color: var(--text-muted);"
+                            th:text="${#temporals.format(entry.createdAt, 'dd MMM yyyy, HH:mm:ss')}">Timestamp</td>
+                    </tr>
+                    <tr th:if="${logs.content.isEmpty()}">
+                        <td colspan="5" class="text-center py-4" style="color: var(--text-muted);">No audit records found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${logs}, '/audit')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

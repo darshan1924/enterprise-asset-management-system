@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="confirmModal" class="modal fade eams-modal" id="eamsConfirmModal" tabindex="-1"
+     aria-labelledby="eamsConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content eams-modal-content">
+            <div class="modal-body text-center pt-4">
+                <div class="eams-modal-icon" id="eamsConfirmIcon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="mt-3 mb-2" id="eamsConfirmModalLabel">Are you sure?</h5>
+                <p class="mb-0" id="eamsConfirmMessage" style="color: var(--text-secondary); font-size: 13.5px;">
+                    This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn eams-btn eams-btn--ghost" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn eams-btn eams-btn--danger" id="eamsConfirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

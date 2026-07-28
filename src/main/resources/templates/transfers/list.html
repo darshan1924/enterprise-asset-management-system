@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:replace="~{layout/base :: layout('Transfers', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Asset Transfers</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Movement of assets between departments and employees</p>
+            </div>
+            <a th:href="@{/transfers/new}" class="btn eams-btn eams-btn--primary" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')"><i class="bi bi-plus-lg"></i> Initiate Transfer</a>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Asset</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th data-sort-field="transferDate">Date</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${transfers.content}">
+                        <td><span class="eams-mono" th:text="${t.assetCode}">AST-001</span></td>
+                        <td th:text="${t.fromEmployeeName} ?: (${t.fromDepartmentName} ?: '—')">From</td>
+                        <td th:text="${t.toEmployeeName} ?: (${t.toDepartmentName} ?: '—')">To</td>
+                        <td th:text="${t.transferDate}">Date</td>
+                        <td>
+                            <span th:if="${t.status.name() == 'PENDING'}" class="eams-badge eams-badge--warning">PENDING</span>
+                            <span th:if="${t.status.name() == 'APPROVED'}" class="eams-badge eams-badge--info">APPROVED</span>
+                            <span th:if="${t.status.name() == 'COMPLETED'}" class="eams-badge eams-badge--success">COMPLETED</span>
+                            <span th:if="${t.status.name() == 'REJECTED'}" class="eams-badge eams-badge--danger">REJECTED</span>
+                        </td>
+                        <td class="text-end">
+                        <span th:if="${t.status.name() == 'PENDING'}" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                            <form th:action="@{/transfers/{id}/approve(id=${t.id})}" method="post" class="d-inline"
+                                  data-confirm="Approve this transfer?">
+                                <button type="submit" class="btn eams-btn eams-btn--ghost" style="padding: 5px 10px; font-size: 12px; color: var(--accent-info); border-color: var(--accent-info);">
+                                    <i class="bi bi-check-lg"></i> Approve
+                                </button>
+                            </form>
+                            <form th:action="@{/transfers/{id}/reject(id=${t.id})}" method="post" class="d-inline"
+                                  data-confirm="Reject this transfer?">
+                                <button type="submit" class="btn eams-btn eams-btn--ghost" style="padding: 5px 10px; font-size: 12px; color: var(--accent-danger); border-color: var(--accent-danger);">
+                                    <i class="bi bi-x-lg"></i> Reject
+                                </button>
+                            </form>
+                        </span>
+                            <span th:if="${t.status.name() == 'APPROVED'}" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                            <form th:action="@{/transfers/{id}/complete(id=${t.id})}" method="post" class="d-inline"
+                                  data-confirm="Mark this transfer as completed?">
+                                <button type="submit" class="btn eams-btn eams-btn--ghost" style="padding: 5px 10px; font-size: 12px; color: var(--accent-primary); border-color: var(--accent-primary);">
+                                    <i class="bi bi-flag"></i> Complete
+                                </button>
+                            </form>
+                        </span>
+                            <span th:if="${t.status.name() == 'COMPLETED' or t.status.name() == 'REJECTED'}" style="color: var(--text-muted); font-size: 12px;">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${transfers.content.isEmpty()}">
+                        <td colspan="6" class="text-center py-4" style="color: var(--text-muted);">No transfers found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${transfers}, '/transfers')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

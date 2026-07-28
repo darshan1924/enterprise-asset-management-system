@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Asset Report', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Asset Inventory Report</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">
+                    <span th:text="${report.totalCount}">0</span> assets matching current filters
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/reports/assets/export(categoryId=${categoryId}, status=${status}, vendorId=${vendorId})}" class="btn eams-btn eams-btn--primary"><i class="bi bi-download"></i> Export CSV</a>
+                <a th:href="@{/reports}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to Reports</a>
+            </div>
+        </div>
+
+        <div class="eams-card mb-3">
+            <form th:action="@{/reports/assets}" method="get" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="eams-label">Category</label>
+                    <select name="categoryId" class="form-select eams-input">
+                        <option value="">All categories</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.categoryName}"
+                                th:selected="${categoryId != null and categoryId == cat.id}">Category</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="eams-label">Status</label>
+                    <select name="status" class="form-select eams-input">
+                        <option value="">All statuses</option>
+                        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"
+                                th:selected="${status != null and status == st}">Status</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="eams-label">Vendor</label>
+                    <select name="vendorId" class="form-select eams-input">
+                        <option value="">All vendors</option>
+                        <option th:each="v : ${vendors}" th:value="${v.id}" th:text="${v.vendorName}"
+                                th:selected="${vendorId != null and vendorId == v.id}">Vendor</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn eams-btn eams-btn--primary w-100"><i class="bi bi-funnel"></i> Apply</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">By Category</h6>
+                    <div th:each="entry : ${report.countByCategory}" class="eams-list-row">
+                        <span style="font-size: 13px; color: var(--text-secondary);" th:text="${entry.key}">Category</span>
+                        <span class="eams-badge eams-badge--info" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">By Status</h6>
+                    <div th:each="entry : ${report.countByStatus}" class="eams-list-row">
+                        <span style="font-size: 13px; color: var(--text-secondary);" th:text="${entry.key}">Status</span>
+                        <span class="eams-badge eams-badge--success" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">By Vendor</h6>
+                    <div th:each="entry : ${report.countByVendor}" class="eams-list-row">
+                        <span style="font-size: 13px; color: var(--text-secondary);" th:text="${entry.key}">Vendor</span>
+                        <span class="eams-badge eams-badge--warning" th:text="${entry.value}">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Vendor</th>
+                        <th>Status</th>
+                        <th>Current Holder</th>
+                        <th>Purchase Cost</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="asset : ${report.assets}">
+                        <td class="eams-mono" th:text="${asset.assetCode}">AST-001</td>
+                        <td th:text="${asset.assetName}">Asset</td>
+                        <td th:text="${asset.categoryName}">Category</td>
+                        <td th:text="${asset.vendorName} ?: '—'">Vendor</td>
+                        <td>
+                        <span th:switch="${asset.status}">
+                            <span th:case="'AVAILABLE'" class="eams-badge eams-badge--success">AVAILABLE</span>
+                            <span th:case="'ALLOCATED'" class="eams-badge eams-badge--info">ALLOCATED</span>
+                            <span th:case="'UNDER_MAINTENANCE'" class="eams-badge eams-badge--warning">MAINTENANCE</span>
+                            <span th:case="*" class="eams-badge eams-badge--danger" th:text="${asset.status}">RETIRED</span>
+                        </span>
+                        </td>
+                        <td th:text="${asset.currentHolderName} ?: '—'">Holder</td>
+                        <td class="eams-mono" th:text="${'₹' + asset.purchaseCost}">₹0</td>
+                    </tr>
+                    <tr th:if="${report.assets.isEmpty()}">
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-muted);">No assets match the selected filters.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Initiate Transfer', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Initiate Asset Transfer</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Fill in department and/or employee fields as applicable</p>
+            </div>
+            <a th:href="@{/transfers}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 760px;">
+            <form th:action="@{/transfers}" th:object="${assetTransferRequestDto}" method="post">
+
+                <div class="mb-3">
+                    <label class="eams-label">Asset</label>
+                    <select class="form-select eams-input" th:field="*{assetId}">
+                        <option value="">Select asset…</option>
+                        <option th:each="asset : ${assets}" th:value="${asset.id}"
+                                th:text="${asset.assetCode + ' — ' + asset.assetName}">Asset</option>
+                    </select>
+                    <div class="eams-error" th:if="${#fields.hasErrors('assetId')}" th:errors="*{assetId}"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">From Department (optional)</label>
+                        <select class="form-select eams-input" th:field="*{fromDepartmentId}">
+                            <option value="">—</option>
+                            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}">Department</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">To Department (optional)</label>
+                        <select class="form-select eams-input" th:field="*{toDepartmentId}">
+                            <option value="">—</option>
+                            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}">Department</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">From Employee (optional)</label>
+                        <select class="form-select eams-input" th:field="*{fromEmployeeId}">
+                            <option value="">—</option>
+                            <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.firstName + ' ' + e.lastName}">Employee</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="eams-label">To Employee (optional)</label>
+                        <select class="form-select eams-input" th:field="*{toEmployeeId}">
+                            <option value="">—</option>
+                            <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.firstName + ' ' + e.lastName}">Employee</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label">Transfer Date</label>
+                    <input type="date" class="form-control eams-input" th:field="*{transferDate}">
+                    <div class="eams-error" th:if="${#fields.hasErrors('transferDate')}" th:errors="*{transferDate}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="eams-label">Reason (optional)</label>
+                    <textarea class="form-control eams-input" rows="2" th:field="*{reason}" placeholder="e.g. Department relocation, role change…"></textarea>
+                    <div class="eams-error" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></div>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary">
+                    <i class="bi bi-check-lg"></i> Initiate Transfer
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

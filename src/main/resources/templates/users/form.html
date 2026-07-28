@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(${isEdit} ? 'Edit User' : 'New User', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${isEdit} ? 'Edit User' : 'New User'">New User</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Create or update a login account</p>
+            </div>
+            <a th:href="@{/users}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 560px;">
+            <form th:action="${isEdit} ? @{/users/{id}(id=${userId})} : @{/users}"
+                  th:object="${userRequestDto}" method="post">
+
+                <div class="mb-3">
+                    <label class="eams-label">Username</label>
+                    <input type="text" class="form-control eams-input" th:field="*{username}">
+                    <div class="eams-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label">Email</label>
+                    <input type="email" class="form-control eams-input" th:field="*{email}">
+                    <div class="eams-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label" th:text="${isEdit} ? 'New Password (optional)' : 'Password'">Password</label>
+                    <input type="password" class="form-control eams-input" th:field="*{password}">
+                    <div class="eams-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="eams-label">Role</label>
+                    <select class="form-select eams-input" th:field="*{roleName}">
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">ROLE</option>
+                    </select>
+                    <div class="eams-error" th:if="${#fields.hasErrors('roleName')}" th:errors="*{roleName}"></div>
+                </div>
+
+                <div class="mb-4 form-check">
+                    <input type="checkbox" class="form-check-input" th:field="*{enabled}">
+                    <label class="form-check-label" style="font-size: 13px; color: var(--text-secondary);">Account enabled</label>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary">
+                    <i class="bi bi-check-lg"></i> <span th:text="${isEdit} ? 'Save Changes' : 'Create User'">Save</span>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

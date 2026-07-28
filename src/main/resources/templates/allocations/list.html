@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:replace="~{layout/base :: layout('Allocations', ~{::section}, ~{})}"><section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Asset Allocations</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Who currently holds what, and for how long</p>
+            </div>
+            <a th:href="@{/allocations/new}" class="btn eams-btn eams-btn--primary" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')"><i class="bi bi-plus-lg"></i> Assign Asset</a>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Asset</th>
+                        <th>Employee</th>
+                        <th data-sort-field="allocationDate">Allocated On</th>
+                        <th>Expected Return</th>
+                        <th>Actual Return</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${allocations.content}">
+                        <td><span class="eams-mono" th:text="${a.assetCode}">AST-001</span> <span style="color: var(--text-muted);" th:text="${a.assetName}">Name</span></td>
+                        <td th:text="${a.employeeName}">Employee</td>
+                        <td th:text="${a.allocationDate}">Date</td>
+                        <td th:text="${a.expectedReturnDate} ?: '—'">Date</td>
+                        <td th:text="${a.actualReturnDate} ?: '—'">Date</td>
+                        <td>
+                            <span th:if="${a.status.name() == 'ACTIVE'}" class="eams-badge eams-badge--info">ACTIVE</span>
+                            <span th:if="${a.status.name() == 'RETURNED'}" class="eams-badge eams-badge--success">RETURNED</span>
+                            <span th:if="${a.status.name() == 'OVERDUE'}" class="eams-badge eams-badge--danger">OVERDUE</span>
+                        </td>
+                        <td class="text-end">
+                            <form th:if="${a.status.name() == 'ACTIVE'}" th:action="@{/allocations/{id}/return(id=${a.id})}" method="post" class="d-inline"
+                                  data-confirm="Mark this asset as returned?" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                                <button type="submit" class="btn eams-btn eams-btn--ghost" style="padding: 5px 12px; font-size: 12px;">
+                                    <i class="bi bi-arrow-return-left"></i> Return
+                                </button>
+                            </form>
+                            <span th:unless="${a.status.name() == 'ACTIVE'}" style="color: var(--text-muted); font-size: 12px;">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${allocations.content.isEmpty()}">
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-muted);">No allocations found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${allocations}, '/allocations')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

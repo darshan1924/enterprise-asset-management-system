@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:replace="~{layout/base :: layout('Maintenance', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Maintenance</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Tickets raised for asset repairs and servicing</p>
+            </div>
+            <a th:href="@{/maintenance/new}" class="btn eams-btn eams-btn--primary" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')"><i class="bi bi-plus-lg"></i> Raise Ticket</a>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Asset</th>
+                        <th>Issue</th>
+                        <th>Vendor</th>
+                        <th data-sort-field="reportedDate">Reported</th>
+                        <th>Cost</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="m : ${maintenanceRecords.content}">
+                        <td><span class="eams-mono" th:text="${m.assetCode}">AST-001</span></td>
+                        <td th:text="${m.issueDescription}">Issue</td>
+                        <td th:text="${m.vendorName} ?: '—'">Vendor</td>
+                        <td th:text="${m.reportedDate}">Date</td>
+                        <td class="eams-mono" th:text="${m.maintenanceCost != null ? '₹' + m.maintenanceCost : '—'}">₹0</td>
+                        <td>
+                            <span th:if="${m.status.name() == 'PENDING'}" class="eams-badge eams-badge--warning">PENDING</span>
+                            <span th:if="${m.status.name() == 'IN_PROGRESS'}" class="eams-badge eams-badge--info">IN PROGRESS</span>
+                            <span th:if="${m.status.name() == 'COMPLETED'}" class="eams-badge eams-badge--success">COMPLETED</span>
+                            <span th:if="${m.status.name() == 'CANCELLED'}" class="eams-badge eams-badge--danger">CANCELLED</span>
+                        </td>
+                        <td class="text-end">
+                        <span th:if="${m.status.name() == 'PENDING' or m.status.name() == 'IN_PROGRESS'}" sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                            <form th:action="@{/maintenance/{id}/complete(id=${m.id})}" method="post" class="d-inline"
+                                  data-confirm="Mark this ticket as completed?">
+                                <button type="submit" class="btn eams-btn eams-btn--ghost" style="padding: 5px 10px; font-size: 12px; color: var(--accent-primary); border-color: var(--accent-primary);">
+                                    <i class="bi bi-check-lg"></i> Complete
+                                </button>
+                            </form>
+                            <form th:action="@{/maintenance/{id}/cancel(id=${m.id})}" method="post" class="d-inline"
+                                  data-confirm="Cancel this ticket?">
+                                <button type="submit" class="btn eams-btn eams-btn--ghost" style="padding: 5px 10px; font-size: 12px; color: var(--accent-danger); border-color: var(--accent-danger);">
+                                    <i class="bi bi-x-lg"></i> Cancel
+                                </button>
+                            </form>
+                        </span>
+                            <span th:unless="${m.status.name() == 'PENDING' or m.status.name() == 'IN_PROGRESS'}" style="color: var(--text-muted); font-size: 12px;">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${maintenanceRecords.content.isEmpty()}">
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-muted);">No maintenance tickets found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${maintenanceRecords}, '/maintenance')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

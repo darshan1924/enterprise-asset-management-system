@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(${isEdit} ? 'Edit Category' : 'New Category', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${isEdit} ? 'Edit Category' : 'New Category'">New Category</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Categories group similar assets together</p>
+            </div>
+            <a th:href="@{/categories}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div class="eams-card" style="max-width: 560px;">
+            <form th:action="${isEdit} ? @{/categories/{id}(id=${categoryId})} : @{/categories}"
+                  th:object="${assetCategoryRequestDto}" method="post">
+
+                <div class="mb-3">
+                    <label class="eams-label">Category Name</label>
+                    <input type="text" class="form-control eams-input" th:field="*{categoryName}" placeholder="e.g. Laptop">
+                    <div class="eams-error" th:if="${#fields.hasErrors('categoryName')}" th:errors="*{categoryName}"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="eams-label">Description</label>
+                    <textarea class="form-control eams-input" rows="3" th:field="*{description}" placeholder="Optional notes about this category"></textarea>
+                    <div class="eams-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <button type="submit" class="btn eams-btn eams-btn--primary">
+                    <i class="bi bi-check-lg"></i> <span th:text="${isEdit} ? 'Save Changes' : 'Create Category'">Save</span>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:replace="~{layout/base :: layout(${asset.assetName}, ~{::section}, ~{})}">
+    <section>
+
+        <div th:if="${successMessage}" class="eams-alert eams-alert--success" th:text="${successMessage}"></div>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1" th:text="${asset.assetName}">Asset Name</h2>
+                <p class="mb-0 eams-mono" style="color: var(--text-secondary);" th:text="${asset.assetCode}">AST-001</p>
+            </div>
+            <div class="d-flex gap-2">
+                <span sec:authorize="hasAnyRole('ADMIN','ASSET_MANAGER')">
+                    <a th:href="@{/assets/{id}/edit(id=${asset.id})}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-pencil"></i> Edit</a>
+                    <form th:if="${asset.status.name() != 'RETIRED' and asset.status.name() != 'ALLOCATED'}"
+                          th:action="@{/assets/{id}/retire(id=${asset.id})}" method="post"
+                          data-confirm="Retire this asset? It will no longer be available for allocation.">
+                        <button type="submit" class="btn eams-btn eams-btn--ghost" style="color: var(--accent-warning); border-color: var(--accent-warning);">
+                            <i class="bi bi-box-arrow-in-down"></i> Retire
+                        </button>
+                    </form>
+                </span>
+                <a th:href="@{/audit/entity/Asset/{id}(id=${asset.id})}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-clock-history"></i> Audit Trail</a>
+                <a th:href="@{/assets}" class="btn eams-btn eams-btn--ghost"><i class="bi bi-arrow-left"></i> Back</a>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-8">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Asset Details</h6>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Category</span><span th:text="${asset.categoryName}">Category</span></div>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Vendor</span><span th:text="${asset.vendorName} ?: '—'">Vendor</span></div>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Location</span><span th:text="${asset.location} ?: '—'">Location</span></div>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Purchase Date</span><span th:text="${asset.purchaseDate}">Date</span></div>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Purchase Cost</span><span class="eams-mono" th:text="${'₹' + asset.purchaseCost}">₹0</span></div>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Warranty Expiry</span><span th:text="${asset.warrantyExpiryDate} ?: '—'">Date</span></div>
+                    <div class="eams-list-row"><span style="color: var(--text-secondary);">Condition</span><span th:text="${asset.condition}">Condition</span></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Status</h6>
+                    <span th:switch="${asset.status.name()}">
+                    <span th:case="'AVAILABLE'" class="eams-badge eams-badge--success">AVAILABLE</span>
+                    <span th:case="'ALLOCATED'" class="eams-badge eams-badge--info">ALLOCATED</span>
+                    <span th:case="'UNDER_MAINTENANCE'" class="eams-badge eams-badge--warning">UNDER MAINTENANCE</span>
+                    <span th:case="*" class="eams-badge eams-badge--danger" th:text="${asset.status}">RETIRED</span>
+                </span>
+                    <div class="mt-3" th:if="${asset.currentHolderName != null}">
+                        <div class="eams-stat-label">Current Holder</div>
+                        <div style="font-size: 15px; font-weight: 600; margin-top: 4px;" th:text="${asset.currentHolderName}">Holder</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="eams-card mb-3">
+            <h6 class="mb-3">Recent Allocations</h6>
+            <div th:if="${allocations.content.isEmpty()}" class="eams-empty-hint">No allocation history yet.</div>
+            <div th:each="a : ${allocations.content}" class="eams-list-row">
+                <span th:text="${a.employeeName}">Employee</span>
+                <span class="eams-mono" style="font-size: 12px; color: var(--text-muted);" th:text="${a.allocationDate} + (${a.actualReturnDate} != null ? ' → ' + ${a.actualReturnDate} : ' (active)')">Dates</span>
+                <span class="eams-badge eams-badge--info" th:text="${a.status}">STATUS</span>
+            </div>
+        </div>
+
+        <div class="eams-card mb-3">
+            <h6 class="mb-3">Maintenance History</h6>
+            <div th:if="${maintenanceRecords.content.isEmpty()}" class="eams-empty-hint">No maintenance tickets yet.</div>
+            <div th:each="m : ${maintenanceRecords.content}" class="eams-list-row">
+                <span th:text="${m.issueDescription}">Issue</span>
+                <span class="eams-mono" style="font-size: 12px; color: var(--text-muted);" th:text="${m.reportedDate}">Date</span>
+                <span class="eams-badge eams-badge--warning" th:text="${m.status}">STATUS</span>
+            </div>
+        </div>
+
+        <div class="eams-card">
+            <h6 class="mb-3">Transfer History</h6>
+            <div th:if="${transfers.content.isEmpty()}" class="eams-empty-hint">No transfer history yet.</div>
+            <div th:each="t : ${transfers.content}" class="eams-list-row">
+                <span th:text="(${t.fromEmployeeName} ?: (${t.fromDepartmentName} ?: '—')) + ' → ' + (${t.toEmployeeName} ?: (${t.toDepartmentName} ?: '—'))">Transfer</span>
+                <span class="eams-mono" style="font-size: 12px; color: var(--text-muted);" th:text="${t.transferDate}">Date</span>
+                <span class="eams-badge eams-badge--info" th:text="${t.status}">STATUS</span>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

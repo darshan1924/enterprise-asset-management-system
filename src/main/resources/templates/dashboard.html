@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('Dashboard', ~{::section}, ~{::pageScripts})}">
+    <section>
+
+        <!-- Page Header -->
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">Dashboard</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Live overview of your organization's assets</p>
+            </div>
+        </div>
+
+        <!-- Top Stats Row 1 -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Total Assets</div>
+                    <div class="eams-stat-value" th:text="${stats.totalAssets}">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Available</div>
+                    <div class="eams-stat-value" style="color: var(--accent-primary);" th:text="${stats.availableAssets}">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Allocated</div>
+                    <div class="eams-stat-value" style="color: var(--accent-info);" th:text="${stats.allocatedAssets}">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card">
+                    <div class="eams-stat-label">Under Maintenance</div>
+                    <div class="eams-stat-value" style="color: var(--accent-warning);" th:text="${stats.underMaintenanceAssets}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Stats Row 2 (Financials & Status Metrics) -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-primary-dim); color: var(--accent-primary);"><i class="bi bi-currency-rupee"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${'₹' + stats.totalAssetValue}">₹0</div>
+                        <div class="eams-metric-label">Total Asset Value</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-warning-dim); color: var(--accent-warning);"><i class="bi bi-tools"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${stats.pendingMaintenanceCount}">0</div>
+                        <div class="eams-metric-label">Open Maintenance Tickets</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-danger-dim); color: var(--accent-danger);"><i class="bi bi-alarm"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${stats.overdueAllocationsCount}">0</div>
+                        <div class="eams-metric-label">Overdue Returns</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-info-dim); color: var(--accent-info);"><i class="bi bi-arrow-left-right"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${stats.pendingTransfersCount}">0</div>
+                        <div class="eams-metric-label">Pending Transfers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Metrics -->
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-info-dim); color: var(--accent-info);"><i class="bi bi-people"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${stats.totalEmployees}">0</div>
+                        <div class="eams-metric-label">Active Employees</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-primary-dim); color: var(--accent-primary);"><i class="bi bi-diagram-3"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${stats.totalDepartments}">0</div>
+                        <div class="eams-metric-label">Departments</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="eams-card d-flex align-items-center gap-3">
+                    <div class="eams-metric-icon" style="background: var(--accent-warning-dim); color: var(--accent-warning);"><i class="bi bi-truck"></i></div>
+                    <div>
+                        <div class="eams-mono eams-metric-value" th:text="${stats.totalVendors} + ' (★ ' + ${stats.averageVendorRating} + ')'">0</div>
+                        <div class="eams-metric-label">Vendors</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW FEATURE: Charts Section -->
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Assets by Category</h6>
+                    <div th:if="${stats.assetsByCategory.isEmpty()}" class="eams-empty-hint">No assets recorded yet.</div>
+                    <div th:unless="${stats.assetsByCategory.isEmpty()}" style="max-width: 320px; margin: 0 auto;">
+                        <canvas id="categoryChart" height="260"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Assets by Status</h6>
+                    <div th:if="${stats.assetsByStatus.isEmpty()}" class="eams-empty-hint">No assets recorded yet.</div>
+                    <div th:unless="${stats.assetsByStatus.isEmpty()}">
+                        <canvas id="statusChart" height="220"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity & Upcoming Maintenance -->
+        <div class="row g-3">
+            <div class="col-md-7">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Recent Activity</h6>
+                    <div th:if="${stats.recentActivities.isEmpty()}" class="eams-empty-hint">No activity recorded yet.</div>
+                    <div th:each="activity : ${stats.recentActivities}" class="eams-list-row align-items-start">
+                        <div>
+                            <div style="font-size: 13px;" th:text="${activity.message}">Action</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted);" th:text="${activity.performedBy}">User</div>
+                        </div>
+                        <div class="eams-mono" style="font-size: 11px; color: var(--text-muted); white-space: nowrap;"
+                             th:text="${#temporals.format(activity.occurredAt, 'dd MMM, HH:mm')}">date</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="eams-card h-100">
+                    <h6 class="mb-3">Upcoming Maintenance <span style="color: var(--text-muted); font-weight: 400; font-size: 12px;">(30 days)</span></h6>
+                    <div th:if="${stats.upcomingMaintenanceAssets.isEmpty()}" class="eams-empty-hint">Nothing due soon.</div>
+                    <div th:each="asset : ${stats.upcomingMaintenanceAssets}" class="eams-list-row">
+                        <div>
+                            <div style="font-size: 13px;" th:text="${asset.assetName}">Asset</div>
+                            <div class="eams-mono" style="font-size: 11px; color: var(--text-muted);" th:text="${asset.assetCode}">CODE</div>
+                        </div>
+                        <span class="eams-badge eams-badge--warning" th:text="${asset.status}">STATUS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Page Scripts for Chart rendering -->
+    <pageScripts>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const categoryLabels = /*[[${stats.assetsByCategory.keySet()}]]*/ [];
+                const categoryValues = /*[[${stats.assetsByCategory.values()}]]*/ [];
+                const statusLabels = /*[[${stats.assetsByStatus.keySet()}]]*/ [];
+                const statusValues = /*[[${stats.assetsByStatus.values()}]]*/ [];
+
+                const chartPalette = ['#2DD8B9', '#5B8DEF', '#F2B134', '#EF5A6F', '#9D7BD8', '#4FC3E0', '#E08A45'];
+                const gridColor = 'rgba(147, 161, 179, 0.12)';
+                const textColor = '#93A1B3';
+
+                Chart.defaults.color = textColor;
+                Chart.defaults.font.family = "'Inter', sans-serif";
+
+                // Render Category Doughnut Chart
+                const categoryCanvas = document.getElementById('categoryChart');
+                if (categoryCanvas && categoryLabels.length > 0) {
+                    new Chart(categoryCanvas, {
+                        type: 'doughnut',
+                        data: {
+                            labels: categoryLabels,
+                            datasets: [{
+                                data: categoryValues,
+                                backgroundColor: chartPalette,
+                                borderColor: '#1A222D',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, font: { size: 11.5 } } }
+                            },
+                            cutout: '62%'
+                        }
+                    });
+                }
+
+                // Render Status Bar Chart
+                const statusCanvas = document.getElementById('statusChart');
+                if (statusCanvas && statusLabels.length > 0) {
+                    const statusColorMap = {
+                        'AVAILABLE': '#2DD8B9',
+                        'ALLOCATED': '#5B8DEF',
+                        'UNDER_MAINTENANCE': '#F2B134',
+                        'RETIRED': '#EF5A6F',
+                        'LOST': '#EF5A6F',
+                        'DAMAGED': '#EF5A6F'
+                    };
+                    const statusColors = statusLabels.map(function (label) {
+                        return statusColorMap[label] || '#93A1B3';
+                    });
+
+                    new Chart(statusCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: statusLabels,
+                            datasets: [{
+                                data: statusValues,
+                                backgroundColor: statusColors,
+                                borderRadius: 6,
+                                maxBarThickness: 42
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { precision: 0 } }
+                            }
+                        }
+                    });
+                }
+            });
+            /*]]>*/
+        </script>
+    </pageScripts>
+</div>
+</body>
+</html>

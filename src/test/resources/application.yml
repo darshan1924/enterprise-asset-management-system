@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/eams_test?createDatabaseIfNotExist=true
+    username: root
+    password: Darshu@1505#
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false

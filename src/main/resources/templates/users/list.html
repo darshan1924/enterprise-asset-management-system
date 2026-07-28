@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout('User Management', ~{::section}, ~{})}">
+    <section>
+
+        <div class="eams-page-header">
+            <div>
+                <h2 class="mb-1">User Management</h2>
+                <p class="mb-0" style="color: var(--text-secondary);">Login accounts and role assignments</p>
+            </div>
+            <a th:href="@{/users/new}" class="btn eams-btn eams-btn--primary"><i class="bi bi-plus-lg"></i> New User</a>
+        </div>
+
+        <div class="eams-card">
+            <div class="table-responsive">
+                <table class="table eams-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${users.content}">
+                        <td th:text="${u.username}">username</td>
+                        <td th:text="${u.email}">email</td>
+                        <td><span class="eams-badge eams-badge--info" th:text="${u.roleName}">ROLE</span></td>
+                        <td>
+                            <span th:if="${u.enabled}" class="eams-badge eams-badge--success">ENABLED</span>
+                            <span th:unless="${u.enabled}" class="eams-badge eams-badge--danger">DISABLED</span>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/users/{id}/edit(id=${u.id})}" class="eams-icon-btn"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/users/{id}/toggle-enabled(id=${u.id})}" method="post" class="d-inline"
+                                  data-confirm="Toggle this user's enabled status?">
+                                <button type="submit" class="eams-icon-btn"><i class="bi bi-power"></i></button>
+                            </form>
+                            <form th:action="@{/users/{id}/delete(id=${u.id})}" method="post" class="d-inline"
+                                  data-confirm="Delete this user? This cannot be undone.">
+                                <button type="submit" class="eams-icon-btn eams-icon-btn--danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${users.content.isEmpty()}">
+                        <td colspan="5" class="text-center py-4" style="color: var(--text-muted);">No users found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:replace="~{fragments/pagination :: pagination(${users}, '/users')}"></div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>
