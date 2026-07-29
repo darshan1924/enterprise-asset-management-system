@@ -174,12 +174,6 @@ src/main/java/com/company/eams
 
 ---
 
-## Screenshots
-
-*(Add screenshots of the Dashboard, Asset list, and a report page here before publishing)*
-
----
-
 ## License
 
 This project was built as a portfolio/learning project.
